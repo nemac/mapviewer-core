@@ -1,0 +1,29 @@
+
+
+.layer-control {
+  background-color: white;
+  padding: .2em;
+  border-radius: .2em;
+  width: 350px;
+
+}
+
+.layer-control .pure-menu-list {
+  padding-left: .5em;
+}
+
+.layer-control .pure-menu-item {
+
+}
+
+.layer-control .pure-menu-link {
+  color: #000;
+}
+
+.layer-control .pure-menu-link:focus {
+  background-color: transparent;
+}
+
+.layer-control .pure-menu-selected {
+  font-weight: bold;
+}

@@ -27,7 +27,6 @@ export default class {
         layer.layer = L.tileLayer(layer.url, {
           id: layer.id,
           attribution: layer.attribution,
-          tileSize: 2048
         })
       }
       if (layer.active) layer.layer.addTo(this._map)

@@ -1,10 +1,45 @@
 
 
-.layer-control {
+/* Leaflet Controls */
+
+.leaflet-control {
   background-color: white;
   padding: .2em;
   border-radius: .2em;
-  width: 350px;
+  border-color: black;
+}
+
+.pin-control, .layer-control {
+	width: 350px;
+	max-height: 450px;
+	overflow-y: auto;
+}
+
+/* Control Panel */
+
+#control-panel-menu {
+	background-color: #d3e4ff;
+	font-weight: bold;
+}
+
+.control-panel-tab-select {
+	border-right: .5px solid #75aaff;
+}
+
+/* Pin Control */
+
+.pin-control {
+
+}
+
+.pin-control .pure-menu-link {
+  color: #000;
+}
+
+
+/* Layer Control */
+
+.layer-control .pure-menu {
 
 }
 

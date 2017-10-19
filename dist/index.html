@@ -46,9 +46,34 @@
   <!-- Backbone -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
 
+
+  <!-- Control Panel Template -->
+  <script type="text/template" id="control-panel-template">
+    <div class="control-panel">
+      <div class="pure-menu pure-menu-horizontal" id="control-panel-menu">
+        <div class="pure-menu-list" id="control-panel-tab-list">
+          <% data.tabs.forEach( tabModel => { %>
+            <li id="<%- tabModel.get('id') %>" class="pure-menu-item control-panel-tab-select <%
+                  if (tabModel.active) {
+                    %>pure-menu-selected<%
+                  } %>"
+            >
+              <a href="#" class="pure-menu-link"><%- tabModel.get("label") %></a>
+            </li>
+          <% }) %>
+        </div>
+      </div>
+      <div id="control-panel-module-wrapper"></div>
+    </div>
+  </script>
+
+
+  <!-- Layer Control Template -->
   <script type="text/template" id="layer-control-template">
     <div class="layer-control">
       <div class="pure-menu">
+        
+        <!-- Basemaps -->
         <span class="pure-menu-heading">Basemaps</span>
         <ul class="pure-menu-list" id="basemaps-menu-list">
           <% _.each(data.basemaps, function (basemap) { %>
@@ -63,6 +88,7 @@
           <% }) %>
         </ul>
 
+        <!-- Ovelay Layers -->
         <span class="pure-menu-heading">Layers</span>
         <ul class="pure-menu-list" id="overlays-menu-list">
           <%  _.each(data.overlays, function (overlay) { %>
@@ -79,6 +105,29 @@
       </div>
     </div>
   </script>
+
+
+  <!-- Pin Control Template -->
+  <script type="text/template" id="pin-control-template">
+    <div class="pin-control">
+      <div class="pure-menu">
+        <!-- <span class="pure-menu-heading">Pins</span> -->
+        <ul class="pure-menu-list" id="pin-list">
+          <% data.models.forEach(function (pin) { %>
+            <li id="<% pin.get('id') %>"
+                class="pure-menu-item pin-control-select <%
+                  if (pin.get('active')) {
+                    %>pure-menu-selected<%
+                  } %>"
+            >
+              <a href="#" class="pure-menu-link"><%- pin.get('label') %></a>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    </div>
+  </script>
+
 
   <!-- webpack bundle -->
   <script src="bundle.js"></script>

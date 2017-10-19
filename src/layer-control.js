@@ -1,13 +1,37 @@
 
-export default class {
+export default function (basemaps, overlays, map, options) {
+  return new LayerControl(basemaps, overlays, map, options)
+}
+
+
+class LayerControl {
 
   constructor (basemaps, overlays, map, options) {
     this._map = map
     this._initLayers(basemaps)
     this._initLayers(overlays)
-    this.model = this._initModel(basemaps, overlays, options)
-    this.view = this._initView(basemaps, overlays, this.model, map, options)
-    this.control = this._initControl(basemaps, overlays, map, this.view.el, options)
+    this._model = LayerControlModel(basemaps, overlays, options)
+    this._view  = LayerControlView(this._model, map, options)
+  }
+
+  get label() {
+    return this.model.get("label")
+  }
+
+  get id() {
+    return this.model.get("id")
+  }
+
+  get el() {
+    return this._view.el
+  }
+
+  get model() {
+    return this._model
+  }
+
+  get view() {
+    return this._view
   }
 
   _initLayers (layers) {
@@ -20,7 +44,7 @@ export default class {
           format: layer.format || 'image/png',
           opacity: layer.opacity || .75,
           attribution: layer.attribution,
-          tileSize: 2048
+          tileSize: layer.tileSize || 2048
         })
       }
       else {
@@ -33,117 +57,110 @@ export default class {
     })
   }
 
-  _initModel (basemaps, overlays, options) {
-    let Model = _Model()
-    return new Model(basemaps, overlays, options)
-  }
-
-  _initView (basemaps, overlays, model, options) {
-    let View = _View()
-    return new View(basemaps, overlays, model, options)
-  }
-
-  _initControl (basemaps, overlays, map, el, options) {
-    let L_Control = _L_Control()
-    return new L_Control(basemaps, overlays, map, el, options)
-  }
 }
 
-function _L_Control () {
-  return L.Control.extend({
 
-    options: {
-      position: "topright"
-    },
+function LayerControlModel (basemaps, overlays, options) {
 
-    initialize: function (basemaps, overlays, map, el, options) {
-      this._container = el
-      L.Util.setOptions(this, options)
-      L.DomEvent.disableClickPropagation(el)
-      L.DomEvent.disableScrollPropagation(el)
-      this.addTo.call(this, map)
-    },
-
-    onAdd: function (map) {
-      return this._container
-    },
-
+  let Model = new Backbone.Model()
+  Model.set({
+    "basemaps" : basemaps,
+    "overlays" : overlays,
+    "label"    : options.label,
+    "id"       : options.id
   })
+
+  return Model
 }
 
-function _Model () {
-  return Backbone.Model.extend({
-    initialize: function (basemaps, overlays, options) {
-      this.basemaps = basemaps,
-      this.overlays = overlays,
-      this.options = options
-    }
-  })
-}
 
-function _View () {
-  return Backbone.View.extend({
+function LayerControlView (model, map, options) {
+  
+  let View = Backbone.View.extend({
 
     events: {
       "click .basemap-select" : "_handleBaseMapClick",
       "click .overlay-select" : "_handleOverlayClick"
     },
 
-    template: _.template($("script#layer-control-template").html(), {variable: "data"}),
+    template: _.template(
+      $("script#layer-control-template").html(),
+      {variable: "data"}
+    ),
 
-    initialize: function (basemaps, overlays, model, map, options) {
+    initialize: function (model, map, options) {
       this.model = model
       this._map = map
       this.render()
+      this._renderBasemap()
       this._initListeners()
     },
 
     render: function () {
-      this.$el.html(this.template(this.model))
+      this.$el.html(this.template(this.model.attributes))
       return this
+    },
+
+    _renderBasemap: function () {
+      let bm = this.model.get("basemaps").filter(bm => bm.active).pop()
+      if (bm) {
+        bm.layer.addTo(this._map)
+        bm.layer.bringToBack()
+      }
+    },
+
+    _renderOverlays: function () {
+      _.each(this.model.get("overlays"), o => {
+        if (o.active) { o.layer.addTo(this._map) }
+      })
     },
 
     _initListeners: function () {
       this.delegateEvents()
       this.listenTo(this.model, "change", this.render)
-
     },
 
     _handleBaseMapClick: function (e) {
       let id = e.currentTarget.id
-      let basemaps = this.model.basemaps.map(basemap => {
-        if (basemap.active) {
-          this._map.removeLayer(basemap.layer)
-          basemap.active = false
-        }
-        else if (basemap.id === id) {
-          this._map.addLayer(basemap.layer)
-          basemap.layer.bringToBack()
-          basemap.active = true
-        }
-        return basemap
-      })
-      this.model.set("basemaps", basemaps)
-      this.model.trigger("change")
+      this._toggleBasemap(id)
+      this._renderBasemap()
     },
 
     _handleOverlayClick: function (e) {
       let id = e.currentTarget.id
-      let overlays = this.model.overlays.map(overlay => {
-        if (overlay.id === id) {
-          if (overlay.active) {
-            this._map.removeLayer(overlay.layer)
-            overlay.active = false
-          } else {
-            this._map.addLayer(overlay.layer)
-            overlay.active = true
-          }
+      this._toggleOverlay(id)
+    },
+
+    _toggleOverlay: function (id) {
+      let overlays = this.model.get("overlays")
+      _.each(overlays, o => {
+        if (o.id === id) {
+          if (o.active) { this._map.removeLayer(o.layer) }
+          else { this._map.addLayer(o.layer) }
+          o.active = !o.active
         }
-        return overlay
       })
-      this.model.set("overlays", overlays)
+      this.model.set({ "overlays" : overlays })
+      this.model.trigger("change")
+    },
+
+    _toggleBasemap: function (id) {
+      let basemaps = this.model.get("basemaps")
+      _.each(basemaps, bm => {
+        if (bm.id === id) {
+          bm.active = !bm.active
+        } else {
+          bm.active = false
+        }
+        if (!bm.active && this._map.hasLayer(bm.layer)) {
+          this._map.removeLayer(bm.layer)
+        }
+      })
+      this.model.set({ "basemaps" : basemaps })
       this.model.trigger("change")
     }
 
   })
+
+  return new View(model, map, options)
 }

@@ -1,35 +1,21 @@
 
+export default function (options) {
+  return new LeafletMap(options)
+}
 
-export default class {
+class LeafletMap {
 
-  constructor (config) {
-    this._initMap(config)
-    this._initListeners()
+  constructor (options) {
+    this._initMap(options)
+  }
+
+  _initMap (options) {
+    this._map = L.map(options.id, options)
+    L.control.attribution().addTo(this._map)
   }
 
   getMap () {
     return this._map
-  }
-
-  _initMap (config) {
-    this._map = L.map(config.id, config)
-    L.control.attribution().addTo(this._map)
-  }
-
-  _initListeners () {
-    let _this = this
-    let handlers = {
-      "click"           : this._handleClick,
-      "zoomend"         : this._handleZoomEnd,
-      "layeradd"        : this._handleLayerAdd,
-      "layerremove"     : this._handleLayerRemove,
-      "resize"          : this._handleResize,
-      "moveend"         : this._handleMoveEnd
-    }
-    Object.keys(handlers).forEach(event => {
-      let cb = handlers[event]
-      this._map.on(event, cb.bind(_this))
-    })
   }
 
   _handleZoomEnd (e) {

@@ -1,0 +1,34 @@
+<!-- Layer Control Template -->
+<script type="text/template" id="layer-control-template">
+  <div class="layer-control">
+    <div class="pure-menu">
+      <span class="pure-menu-heading">Basemaps</span>
+      <ul class="pure-menu-list" id="basemaps-menu-list">
+        <% _.each(data.basemaps, function (basemap) { %>
+          <li id="<%= basemap.id %>"
+              class="pure-menu-item basemap-select <%
+                if (basemap.active) { 
+                  %>pure-menu-selected<%
+                } %>"
+          >
+            <a href="#" class="pure-menu-link"><%- basemap.label %></a>
+          </li>
+        <% }) %>
+      </ul>
+
+      <span class="pure-menu-heading">Layers</span>
+      <ul class="pure-menu-list" id="overlays-menu-list">
+        <%  _.each(data.overlays, function (overlay) { %>
+          <li id="<%= overlay.id %>"
+              class="pure-menu-item overlay-select <%
+                if (overlay.active) {
+                  %>pure-menu-selected<%
+                } %>"
+          >
+            <a href="#" class="pure-menu-link"><%- overlay.label %></a>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+</script>

@@ -1,19 +1,42 @@
 import options from "../config/config"
-import LeafletMap from "./map"
+import BasemapControl from "./basemap-control"
 import LayerControl from "./layer-control"
 import PinControl from "./pin-control"
 import ControlPanel from "./control-panel"
 
 $(function () {
+
   let app = {}
-  window.app = app
-  app.map = LeafletMap(options.mapConfig)
-  app.layers = LayerControl(
-    options.basemaps,
+
+  app._map = L.map(options.map.id, options.map)
+
+  app.attribution = L.control.attribution({
+    position: options.controls.attribution.position
+  })
+  app.attribution.addTo(app._map)
+
+  app.controls = {}
+
+  app.controls.layers = LayerControl(
     options.overlays,
-    app.map.getMap(),
-    options.control.layers
+    app._map,
+    options.controls.layers
   )
-  app.pins = PinControl(app.map.getMap(), options.control.pins)
-  app.control = ControlPanel([app.layers, app.pins], app.map.getMap(), options.control.panel)
+
+  app.controls.basemaps = BasemapControl(
+    options.basemaps,
+    app._map,
+    options.controls.basemaps
+  )
+  
+  app.controls.pins = PinControl(
+    app._map,
+    options.controls.pins
+  )
+  
+  app.controlPanel = ControlPanel(
+    [app.controls.basemaps, app.controls.layers, app.controls.pins],
+    app._map, options.controls.panel
+  )
+
 })

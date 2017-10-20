@@ -39,7 +39,7 @@ function ControlPanelModel (modules, map, options) {
 
   let Model = new Backbone.Model()
   Model.set({
-    title : "Control Panel",
+    label : "Control Panel",
     tabs  : ControlPanelTabCollection(modules, map, options)
   })
 
@@ -105,7 +105,7 @@ function ControlPanelView(model, options) {
     },
 
     _attachActiveModule: function () {
-      let wrapper = this.$el.find("#control-panel-module-wrapper")
+      let wrapper = this.$el.find("#control-panel-active-module-wrapper")
       let activeTab = this.tabs.findWhere({ active: true })
       let el = activeTab.get("module").el
       let childNodes = wrapper.children()
@@ -144,7 +144,7 @@ function LeafletControl (el, map, options) {
   let Control = L.Control.extend({
 
     options: {
-      position: "topright"
+      position: options.position
     },
 
     initialize: function () {

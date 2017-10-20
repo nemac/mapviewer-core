@@ -1,7 +1,7 @@
 
 export default {
 
-  mapConfig: {
+  map: {
     id: "map-wrapper",
     center: [38.5, -81],
     zoom: 10,
@@ -27,18 +27,24 @@ export default {
     touchZoom: true
   },
 
-  control: {
+  controls: {
+
     panel: {
       activeModuleId: "layerControl",
-      label: "Control"
+      label: "Control",
+      position: "topright"
     },
+
     layers: {
       label: "Layers",
       id: "layerControl"
     },
-    zoom: {
 
+    basemaps: {
+      label: "Basemaps",
+      id: "basemapControl"
     },
+
     pins: {
       label: "Pins",
       id: "pinControl",
@@ -52,6 +58,14 @@ export default {
           shadowSize: [41, 41]
         }
       }
+    },
+
+    attribution: {
+      position: "bottomleft"
+    },
+
+    zoom: {
+      active: true
     }
   },
 
@@ -76,15 +90,38 @@ export default {
 
   overlays: [
     {
-      id: "MeanNDVI",
-      label: "Test Mean NDVI",
-      active: true,
-      url: "https://landat-tiles.nemac.org/mapcache",
-      info: "Factor scores describing the strong majority of the variation in the phenology variables. Those shown here are closely associated with (1) seasonality, and with (2) the day-of-year variables such as the middle of the growing season.",
-      legend: "legends/abv.png",
-      format: "image/png",
-      tileSize: 256,
-      type: "WMS"
+      id: "NDVI",
+      label: "NDVI THINGS",
+      layers: [
+        {
+          id: "MeanNDVI",
+          label: "Test Mean NDVI",
+          active: false,
+          url: "https://landat-tiles.nemac.org/mapcache",
+          info: "Factor scores describing the strong majority of the variation in the phenology variables. Those shown here are closely associated with (1) seasonality, and with (2) the day-of-year variables such as the middle of the growing season.",
+          legend: "legends/abv.png",
+          format: "image/png",
+          tileSize: 512,
+          type: "WMS"
+        }
+      ]
+    },
+    {
+      id: "other",
+      label: "Other Layers",
+      layers: [
+        {
+          id: "Factor123",
+          label: "Summary phenology: seasonality and timing",
+          active: false,
+          url: "https://landat-tiles.nemac.org/mapcache",
+          info: "Factor scores describing the strong majority of the variation in the phenology variables. Those shown here are closely associated with (1) seasonality, and with (2) the day-of-year variables such as the middle of the growing season.",
+          legend: "legends/abv.png",
+          format: "image/png",
+          tileSize: 256,
+          type: "WMS"
+        },
+      ]
     }
   ]
 }

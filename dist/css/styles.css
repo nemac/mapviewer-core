@@ -1,4 +1,8 @@
 
+#map-wrapper {
+  height: 500px;
+  width: 1500px;
+}
 
 /* Leaflet Controls */
 
@@ -9,13 +13,16 @@
   border-color: black;
 }
 
-.pin-control, .layer-control {
+.pin-control, .layer-control, .basemap-control {
 	width: 350px;
 	max-height: 450px;
 	overflow-y: auto;
 }
 
 /* Control Panel */
+
+.control-panel {
+}
 
 #control-panel-menu {
 	background-color: #d3e4ff;
@@ -44,21 +51,33 @@
 }
 
 .layer-control .pure-menu-list {
-  padding-left: .5em;
 }
 
 .layer-control .pure-menu-item {
 
 }
 
-.layer-control .pure-menu-link {
+.layer-control   .pure-menu-link,
+.basemap-control .pure-menu-link {
   color: #000;
 }
 
-.layer-control .pure-menu-link:focus {
+.layer-control   .pure-menu-link:focus,
+.basemap-control .pure-menu-link:focus,
+.control-panel   .pure-menu-link:focus,
+.layer-control   .pure-menu-link:hover,
+.basemap-control .pure-menu-link:hover,
+.control-panel   .pure-menu-link:hover {
   background-color: transparent;
 }
 
-.layer-control .pure-menu-selected {
+.layer-control   .pure-menu-selected,
+.basemap-control .pure-menu-selected {
   font-weight: bold;
+}
+
+.layer-opacity-slider-wrapper {
+  width: 50px;
+  float: right;
+  background-color: red;
 }
